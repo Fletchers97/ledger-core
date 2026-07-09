@@ -28,3 +28,8 @@ func (s *AccountService) CreateAccount(ctx context.Context, acc *domain.Account)
 func (s *AccountService) GetAccountByID(ctx context.Context, id string) (*domain.Account, error) {
     return s.repo.GetByID(ctx, id)
 }
+
+// DeleteAccount deletes an account by its ID
+func (s *AccountService) DeleteAccount(ctx context.Context, id string) error {
+    return s.repo.Delete(ctx, id)
+}

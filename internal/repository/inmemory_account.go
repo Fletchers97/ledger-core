@@ -44,3 +44,15 @@ func (r *InMemoryAccountRepo) UpdateBalance(ctx context.Context, id string, newB
 	}
 	return fmt.Errorf("account not found")
 }
+
+func (r *InMemoryAccountRepo) Delete(ctx context.Context, id string) error {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    
+    if _, ok := r.accounts[id]; !ok {
+        return fmt.Errorf("account not found")
+    }
+    
+    delete(r.accounts, id)
+    return nil
+}

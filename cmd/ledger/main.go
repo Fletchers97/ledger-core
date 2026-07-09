@@ -28,6 +28,7 @@ func main() {
 		return
 	}
 
+	fmt.Println("Success! Account created with balance:", acc.Balance)
 	
 	foundAcc, err := svc.GetAccountByID(context.Background(), "1")
 	if err != nil {
@@ -36,5 +37,10 @@ func main() {
     	fmt.Println("Account found:", foundAcc.ID, "with balance:", foundAcc.Balance)
 	}
 
-	fmt.Println("Success! Account created with balance:", acc.Balance)
+	err = svc.DeleteAccount(context.Background(), "1")
+	if err != nil {
+		fmt.Println("Error deleting account:", err)
+	} else {
+		fmt.Println("Account deleted successfully")
+	}
 }
