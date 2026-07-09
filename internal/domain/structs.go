@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import ("time"
+		"errors")
+
+var ErrInvalidBalance = errors.New("invalid balance: balance cannot be negative")
 
 type Account struct {
 	ID        string    `json:"id"`
