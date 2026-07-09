@@ -6,7 +6,7 @@ import (
 	"github.com/Fletchers97/ledger-core/internal/domain"
 )
 
-// AccountRepository описывает контракт для работы с базой данных счетов
+
 type AccountRepository interface {
 	Create(ctx context.Context, account *domain.Account) error
 	GetByID(ctx context.Context, id string) (*domain.Account, error)
