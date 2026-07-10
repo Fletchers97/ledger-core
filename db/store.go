@@ -16,23 +16,24 @@ func NewSQLStore(db *sql.DB) *SQLStore {
 }
 
 func (store *SQLStore) TransferFunds(ctx context.Context, fromID, toID string, amount int64) error {
+	// Start a transaction
 	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
-
+	// Withdraw from the source account
 	err = execTransfer(ctx, tx, fromID, -amount)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-
+	// Credit to the destination account
 	err = execTransfer(ctx, tx, toID, amount)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-
+	// Commit the transaction
 	return tx.Commit()
 }
 
