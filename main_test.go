@@ -6,21 +6,28 @@ import (
     _ "github.com/lib/pq"
 	store "github.com/Fletchers97/ledger-core/db"
 	"context"
+	"github.com/stretchr/testify/require"
+	"fmt"
+	"time"
+	"os"
+	"log"
+
 )
 
-func TestConnectToDB(t *testing.T) {
-    connStr := "postgresql://root:secretpassword@localhost:5432/ledger?sslmode=disable"
-    db, err := sql.Open("postgres", connStr)
+
+var testQueries *store.Queries
+func TestMain(m *testing.M) {
+	connStr := "postgresql://root:secretpassword@localhost:5432/ledger?sslmode=disable"
+    conn, err := sql.Open("postgres", connStr)
     if err != nil {
-        t.Fatal("Failed to open the connection:", err)
+        log.Fatal(err)
     }
 
-    err = db.Ping() // This will attempt to connect to the database and verify the connection
-    if err != nil {
-        t.Fatal("Failed to reach the database:", err)
-    }
+    // 2. Инициализируем глобальную переменную здесь!
+    testQueries = store.New(conn)
 
-    t.Log("Success! We have connected to the database.")
+    // 3. Запускаем все тесты
+    os.Exit(m.Run())
 }
 
 func TestCreateAccount(t *testing.T) {
@@ -30,8 +37,9 @@ func TestCreateAccount(t *testing.T) {
 		t.Fatal("Failed to open the connection:", err)
 	}
 
+	randomID := fmt.Sprintf("acc_%d", time.Now().UnixNano())
 	params := map[string]interface{}{
-		"Owner": "Bogdan",
+		"Owner": randomID,
 		"Balance":    int64(100),
 		"Currency": "USD",
 	}
@@ -56,4 +64,24 @@ func TestCreateAccount(t *testing.T) {
 
 	t.Log("Success! Account created with ID:", acc.ID)
 
+}
+
+func TestGetAccount(t *testing.T) {
+    randomID := fmt.Sprintf("acc_%d", time.Now().UnixNano())
+    
+    account, err := testQueries.CreateAccount(context.Background(), store.CreateAccountParams{
+        ID:       randomID,
+        Balance:  100,
+        Currency: "USD",
+    })
+    require.NoError(t, err)
+
+    //Get the account from the database
+    account2, err := testQueries.GetAccount(context.Background(), account.ID)
+    require.NoError(t, err)
+    require.NotEmpty(t, account2)
+
+    //Check that the retrieved account matches the created account
+    require.Equal(t, account.ID, account2.ID)
+    require.Equal(t, account.Balance, account2.Balance)
 }
