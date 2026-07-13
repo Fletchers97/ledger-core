@@ -85,3 +85,25 @@ func TestGetAccount(t *testing.T) {
     require.Equal(t, account.ID, account2.ID)
     require.Equal(t, account.Balance, account2.Balance)
 }
+
+func TestUpdateAccount(t *testing.T) {
+	randomID := fmt.Sprintf("acc_%d", time.Now().UnixNano())	
+	account, err := testQueries.CreateAccount(context.Background(), store.CreateAccountParams{
+		ID:       randomID,
+		Balance:  500,
+		Currency: "USD",
+	})
+	require.NoError(t, err)
+
+	account2, err := testQueries.UpdateAccount(context.Background(), store.UpdateAccountParams{
+		ID:      account.ID,
+		Balance: 1000,
+	})
+	require.NoError(t, err)
+	require.NotEmpty(t, account2)
+
+	require.Equal(t, account.ID, account2.ID)
+	require.Equal(t, int64(1000), account2.Balance)
+}
+
+	

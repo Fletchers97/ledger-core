@@ -10,4 +10,5 @@ type Store interface {
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (models.Account, error)
 	GetAccount(ctx context.Context, id string) (models.Account, error)
 	CountAccounts(ctx context.Context) (int64, error)
+	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (models.Account, error)
 }
