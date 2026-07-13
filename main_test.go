@@ -106,4 +106,19 @@ func TestUpdateAccount(t *testing.T) {
 	require.Equal(t, int64(1000), account2.Balance)
 }
 
-	
+func TestDeleteAccount(t *testing.T) {
+	randomID := fmt.Sprintf("acc_%d", time.Now().UnixNano())
+	account, err := testQueries.CreateAccount(context.Background(), store.CreateAccountParams{
+		ID:       randomID,
+		Balance:  100,
+		Currency: "USD",
+	})
+	require.NoError(t, err)
+
+	err = testQueries.DeleteAccount(context.Background(), account.ID)
+	require.NoError(t, err)
+
+	account2, err := testQueries.GetAccount(context.Background(), account.ID)
+	require.Error(t, err)
+	require.Empty(t, account2)
+}
