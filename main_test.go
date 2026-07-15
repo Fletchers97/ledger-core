@@ -96,8 +96,8 @@ func TestUpdateAccount(t *testing.T) {
 	require.NoError(t, err)
 
 	account2, err := testQueries.UpdateAccount(context.Background(), store.UpdateAccountParams{
-		ID:      account.ID,
-		Balance: 1000,
+		ID:     account.ID,
+		Amount: 1000,
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, account2)

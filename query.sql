@@ -16,7 +16,7 @@ SELECT count(*) FROM accounts;
 
 -- name: UpdateAccount :one
 UPDATE accounts
-SET balance = $2
+SET balance = balance + sqlc.arg(amount)
 WHERE id = $1
 RETURNING *;
 
